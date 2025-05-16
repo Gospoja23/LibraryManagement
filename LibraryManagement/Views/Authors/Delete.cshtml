@@ -1,0 +1,31 @@
+﻿@model LibraryManagement.ViewModels.Authors.GetAuthorVM;
+
+@{
+    ViewData["Title"] = "Delete Author";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="alert alert-warning">
+    <strong>Warning!</strong> Are you sure you want to delete the author "<em>@Model.FirstName+@Model.LastName</em>"?
+</div>
+
+<div>
+    <h3>Author Details:</h3>
+    <ul>
+        <li><strong>First Name:</strong> @Model.FirstName</li>
+        <li><strong>Last Name:</strong> @Model.LastName</li>
+    </ul>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Action("Index", "Authors")" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

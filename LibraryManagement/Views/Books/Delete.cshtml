@@ -1,0 +1,38 @@
+﻿@model LibraryManagement.ViewModels.Books.GetBookVM;
+
+@{
+    ViewData["Title"] = "Delete Book";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="alert alert-warning">
+    <strong>Warning!</strong> Are you sure you want to delete the book "<em>@Model.Title</em>"?
+</div>
+
+<div>
+    <h3>Book Details:</h3>
+    <ul>
+        <li><strong>Title:</strong> @Model.Title</li>
+        <li><strong>Genre:</strong> @Model.Genre</li>
+        <li>
+            <strong>Authors:</strong>
+            @foreach (var author in Model.Authors)
+            {
+                <span>@author.AuthorFullName</span>
+            }
+        </li>
+    </ul>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Action("Index", "Books")" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

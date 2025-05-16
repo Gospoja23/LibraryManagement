@@ -1,0 +1,66 @@
+﻿@model List<LibraryManagement.ViewModels.Books.GetBookLoanDataVM>;
+@using LibraryManagement.Data.Entities;
+
+@{
+    ViewData["Title"] = "Books";
+
+    var isAuthenticated = User.Identity != null && User.Identity.IsAuthenticated;
+
+    var isAdmin = isAuthenticated && User.IsInRole(UserRole.Admin.ToString());
+}
+
+<h1>Books</h1>
+
+@if(isAdmin){
+    <a href="@Url.Action("Create", "Books")" class="btn btn-primary mb-3">Add New Book</a>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Authors</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            var isBookTakenByUser = book.IsTaken && book.IsTakenByCurrentUser;
+
+            <tr class="@(isBookTakenByUser ? "table-success" : "")">
+                <td>@book.Id</td>
+                <td>@book.Title</td>
+                <td>@book.Genre</td>
+                <td>
+                    @foreach (var author in book.Authors)
+                    {
+                        <span>@author.AuthorFullName |</span>
+                    }
+                </td>
+
+                <td>
+                    @if (!book.IsTaken)
+                    {
+                        <form asp-action="BorrowBook" method="post" class="d-inline-block">
+                            <input type="hidden" name="bookId" value="@book.Id" />
+                            <button type="submit" class="btn btn-sm btn-success">Borrow</button>
+                        </form>
+                    }
+                    @if (isBookTakenByUser)
+                    {
+                        <form asp-action="ReturnBook" method="post" class="d-inline-block">
+                            <input type="hidden" name="loanId" value="@book.LoanId" />
+                            <button type="submit" class="btn btn-sm btn-primary">Return</button>
+                        </form>
+                    }
+                    @if(isAdmin){
+                        <a href="@Url.Action("Edit", "Books", new { id = book.Id })" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="@Url.Action("Delete", "Books", new { id = book.Id })" class="btn btn-sm btn-danger">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
